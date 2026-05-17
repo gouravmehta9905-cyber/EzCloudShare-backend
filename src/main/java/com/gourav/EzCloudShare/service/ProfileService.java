@@ -127,4 +127,11 @@ public class ProfileService {
         return profileRepository.findByClerkId(clerkId);
 
     }
+
+    public String getCurrentClerkId(){
+        if(SecurityContextHolder.getContext().getAuthentication()==null){
+            throw new UsernameNotFoundException("User not Authenticated");
+        }
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
 }

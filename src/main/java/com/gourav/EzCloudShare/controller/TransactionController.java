@@ -22,8 +22,7 @@ public class TransactionController {
 
     @GetMapping
     public ResponseEntity<?> getUserTransactions(){
-        ProfileDocument currentProfile=profileService.getCurrentProfile();
-        String clerkId=currentProfile.getClerkId();
+        String clerkId = profileService.getCurrentClerkId();
 
         List<PaymentTransaction> transactions=paymentTransactionRepository.findByClerkIdAndStatusOrderByTransactionDateDesc(clerkId,"SUCCESS");
         return ResponseEntity.ok(transactions);

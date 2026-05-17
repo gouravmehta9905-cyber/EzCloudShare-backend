@@ -30,7 +30,7 @@ public class UserCreditsService {
     }
 
     public UserCredits getUserCredits(){
-        String clerkId =profileService.getCurrentProfile().getClerkId();
+        String clerkId = profileService.getCurrentClerkId();
         return getUserCredits(clerkId);
     }
 
@@ -42,7 +42,7 @@ public class UserCreditsService {
 
     @Transactional
     public UserCredits consumeCredit(int creditsToDeduct){
-        String clerkId = profileService.getCurrentProfile().getClerkId();
+        String clerkId = profileService.getCurrentClerkId();
 
         UserCredits userCredits = userCreditsRepository.findByClerkId(clerkId)
                 .orElseThrow(() -> new RuntimeException("User credits not found"));

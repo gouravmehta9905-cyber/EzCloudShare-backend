@@ -35,7 +35,7 @@ public class FileMetadataService {
     private final FileMetadataRepository fileMetadataRepository;
 
     public List<FileMetadataDTO> uploadFiles(MultipartFile files[]) throws IOException {
-        ProfileDocument currentProfile=profileService.getCurrentProfile();
+        String clerkId = profileService.getCurrentClerkId();
         List<FileMetadataDocument> savedFiles=new ArrayList<>();
 
         if(!userCreditsService.hasEnoughCredits(files.length * 10)){
@@ -55,7 +55,7 @@ public class FileMetadataService {
                     .name(file.getOriginalFilename())
                     .size(file.getSize())
                     .type(file.getContentType())
-                    .clerkId(currentProfile.getClerkId())
+                    .clerkId(clerkId)
                     .isPublic(false)
                     .uploadAt(LocalDateTime.now())
                     .build();
@@ -88,8 +88,8 @@ public class FileMetadataService {
 
     }
     public List<FileMetadataDTO>getFiles(){
-        ProfileDocument currentProfile=profileService.getCurrentProfile();
-        List<FileMetadataDocument>files=fileMetadataRepository.findByClerkId(currentProfile.getClerkId());
+        String clerkId = profileService.getCurrentClerkId();
+        List<FileMetadataDocument>files=fileMetadataRepository.findByClerkId(clerkId);
         return files.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
@@ -110,11 +110,11 @@ public class FileMetadataService {
 
     public void deleteFile(String id){
         try{
-            ProfileDocument currentProfile= profileService.getCurrentProfile();
+            String clerkId = profileService.getCurrentClerkId();
             FileMetadataDocument file = fileMetadataRepository.findById(id)
                     .orElseThrow(()-> new RuntimeException("File not found"));
 
-            if(!file.getClerkId().equals(currentProfile.getClerkId())){
+            if(!file.getClerkId().equals(clerkId)){
                 throw new RuntimeException("File not belongs to current User");
             }
             Path filePath=Paths.get(file.getFileLocation());
@@ -123,7 +123,7 @@ public class FileMetadataService {
             fileMetadataRepository.deleteById(id);
             // 🔥 CREDIT REFUND (THIS WAS MISSING)
             userCreditsService.addCredits(
-                    currentProfile.getClerkId(),
+                    clerkId,
                     10,
                     null
             );
@@ -138,13 +138,13 @@ public class FileMetadataService {
     }
 
     public FileMetadataDTO togglePublic(String id){
-        ProfileDocument currentProfile = profileService.getCurrentProfile();
+        String clerkId = profileService.getCurrentClerkId();
 
         FileMetadataDocument file = fileMetadataRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("File not Found"));
 
         // ✅ Add ownership check
-        if(!file.getClerkId().equals(currentProfile.getClerkId())){
+        if(!file.getClerkId().equals(clerkId)){
             throw new RuntimeException("Not allowed");
         }
 

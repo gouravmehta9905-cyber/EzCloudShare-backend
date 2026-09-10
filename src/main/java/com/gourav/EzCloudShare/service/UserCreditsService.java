@@ -17,7 +17,7 @@ public class UserCreditsService {
     public UserCredits createInitialCredits(String clerkId){
         UserCredits userCredits = UserCredits.builder()
                 .clerkId(clerkId)
-                .credits(50)
+                .credits(100)
                 .plan("BASIC")
                 .build();
         return userCreditsRepository.save(userCredits);
@@ -27,7 +27,7 @@ public class UserCreditsService {
         UserCredits userCredits = userCreditsRepository.findByClerkId(clerkId)
                 .orElseGet(() -> createInitialCredits(clerkId));
         if (userCredits.getCredits() == null) {
-            userCredits.setCredits(50);
+            userCredits.setCredits(100);
             userCredits = userCreditsRepository.save(userCredits);
         }
         return userCredits;

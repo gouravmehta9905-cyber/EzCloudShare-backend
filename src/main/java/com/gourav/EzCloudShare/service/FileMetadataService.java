@@ -38,7 +38,7 @@ public class FileMetadataService {
         String clerkId = profileService.getCurrentClerkId();
         List<FileMetadataDocument> savedFiles=new ArrayList<>();
 
-        if(!userCreditsService.hasEnoughCredits(files.length * 10)){
+        if(!userCreditsService.hasEnoughCredits(files.length * 2)){
             throw new RuntimeException("Not Enough Credits to upload files. Please purchase more credits.");
         }
 
@@ -60,7 +60,7 @@ public class FileMetadataService {
                     .uploadAt(LocalDateTime.now())
                     .build();
 
-            userCreditsService.consumeCredit(10);
+            userCreditsService.consumeCredit(2);
 
             savedFiles.add(fileMetadataRepository.save(fileMetadata));
 
@@ -124,7 +124,7 @@ public class FileMetadataService {
             // 🔥 CREDIT REFUND (THIS WAS MISSING)
             userCreditsService.addCredits(
                     clerkId,
-                    10,
+                    2,
                     null
             );
 

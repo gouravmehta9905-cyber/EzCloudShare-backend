@@ -37,8 +37,10 @@ public class PaymentService {
 
     public PaymentDTO createOrder(PaymentDTO paymentDTO){
         try {
-            ProfileDocument currentProfile=profileService.getCurrentProfile();
-            String clerkId=currentProfile.getClerkId();
+            ProfileDocument currentProfile = profileService.getCurrentProfile();
+            String clerkId = currentProfile != null ? currentProfile.getClerkId() : profileService.getCurrentClerkId();
+            String userEmail = currentProfile != null ? currentProfile.getEmail() : "";
+            String userName = currentProfile != null ? ((currentProfile.getFirstName() != null ? currentProfile.getFirstName() : "") + " " + (currentProfile.getLastName() != null ? currentProfile.getLastName() : "")).trim() : "";
 
             RazorpayClient razorpayClient=new RazorpayClient(razorpayKeyId,razorpayKeySecret);
             JSONObject orderRequest=new JSONObject();
@@ -59,8 +61,8 @@ public class PaymentService {
                     .currency(paymentDTO.getCurrency())
                     .status("PENDING")
                     .transactionDate(LocalDateTime.now())
-                    .userEmail(currentProfile.getEmail())
-                    .userName(currentProfile.getFirstName()+" "+currentProfile.getLastName())
+                    .userEmail(userEmail)
+                    .userName(userName)
                     .build();
 
             paymentTransactionRepository.save(transaction);

@@ -15,18 +15,22 @@ public class UserCreditsService {
     private final ProfileService profileService;
 
     public UserCredits createInitialCredits(String clerkId){
-        UserCredits userCredits =UserCredits.builder()
+        UserCredits userCredits = UserCredits.builder()
                 .clerkId(clerkId)
-                .credits(100)
+                .credits(50)
                 .plan("BASIC")
                 .build();
         return userCreditsRepository.save(userCredits);
 
     }
     public UserCredits getUserCredits(String clerkId){
-        return userCreditsRepository.findByClerkId(clerkId)
-                .orElseGet(()->createInitialCredits(clerkId));
-
+        UserCredits userCredits = userCreditsRepository.findByClerkId(clerkId)
+                .orElseGet(() -> createInitialCredits(clerkId));
+        if (userCredits.getCredits() == null) {
+            userCredits.setCredits(50);
+            userCredits = userCreditsRepository.save(userCredits);
+        }
+        return userCredits;
     }
 
     public UserCredits getUserCredits(){

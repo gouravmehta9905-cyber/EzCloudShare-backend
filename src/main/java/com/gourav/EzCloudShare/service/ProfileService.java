@@ -31,7 +31,7 @@ public class ProfileService {
                 .firstName(profileDTO.getFirstName())
                 .lastName(profileDTO.getLastName())
                 .photoUrl(profileDTO.getPhotoUrl())
-                .credits(100)
+                .credits(50)
                 .createdAt(Instant.now())
                 .build();
 
